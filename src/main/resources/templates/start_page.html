@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymepeaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.1.min.js}" src="/js/jquery-3.6.1.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/custom.js}" src="/js/custom.js"></script>
+
+    <link th:href="@{/css/custom.css}" href="/css/custom.css" rel="stylesheet" type="text/css" >
+
+</head>
+<body>
+
+
+
+<div class="main-container">
+    <header th:object="${currentUser}" >
+        <div  th:if="${#authorization.expression('isAuthenticated()')}">
+            Hello, <label th:text = "${currentUser.getUsername()}"> </label>
+        </div>
+        <div  th:unless="${#authorization.expression('isAuthenticated()')}">
+            NOT AUTORISE
+        </div>
+        <a href="/logout">Выйти</a>
+    </header>
+
+<div th:each="string : ${playersWithRoleList}">
+    <p th:text="${string}"></p>
+</div>
+
+<div>
+    <div class="select-dropdown">
+        <form  th:method="POST" th:object="${gamePatterns}" th:action = "@{/selectPattern}" >
+        <select class="auto-send-select"  th:field = "*{currentGamePatternName}">
+<!--            th:attr="data-action=${gamePatterns.action}"-->
+            <option th:each="string : ${gamePatterns.getKeySet()}"
+                    th:value="${string}" th:text = "${string}"
+                    th:selected="${string==currentGamePatternName}">Option</option>
+
+        </select>
+        </form>
+
+    </div>
+    <form  th:method="POST" th:object="${form}" th:action = "@{/SetSettings}" >
+    <!--    th:value="${form.countOfPlayers}"-->
+        <input type="range" min="3" max="30" step="1" oninput="rangevalue.value=value"
+               class="slider"
+               th:value="${form.countOfPlayers}" th:field="*{countOfPlayers}"/>
+        <output id="rangevalue" th:text = "${form.countOfPlayers}"></output>
+
+        <div th:each="property : ${form.activeRolesQuantity.entrySet()}">
+            <div class="form-group">
+                <label th:for="*{activeRolesQuantity['__${property.key}__']}" th:text="${property.key}">Property</label>
+                <input type="text" class="form-control" th:field="*{activeRolesQuantity['__${property.key}__']}" />
+            </div>
+        </div>
+        <input type = "submit" value="SET SETTINGS">
+    </form>
+</div>
+
+
+<div class="person-interface">
+    <div th:each = "person,itemStat : ${playersList.getPlayers()}">
+        <form th:method = "DELETE" th:action="@{/{id}(id = ${itemStat.index})}">
+            <label th:text="${person}">Person</label> <input type="submit" value="X">
+        </form>
+    </div>
+    <div>
+        <form th:method="POST" th:object="${nameField}" th:action = "@{/AddPerson}">
+            <input type="text" th:field="*{value}" class="new-person-field"/>
+            <div th:if="${#fields.hasErrors('value')}" th:errors ="*{value}"> name error </div>
+
+            <input type = "submit" value="ADD PLAYER"/>
+
+        </form>
+
+    </div>
+</div>
+
+<form th:method="POST" th:action = "@{/Refresh}">
+    <input type = "submit" value="REFRESH"/>
+</form>
+
+
+    <button type="button" th:onclick="showAlert()">
+        Show Alert
+    </button>
+</div>
+<!--#pisia popa pisia popa -->
+<!--#pisia popa pisia popa -->
+<!--#v denusa velukiy debelyi pryten`-->
+<!--nakazyu programi pratsuvatu (please)-->
+
+</body>
+</html>
