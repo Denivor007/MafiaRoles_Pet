@@ -2,6 +2,8 @@ package com.denivor.mafia.services;
 
 import com.denivor.mafia.entity.Role;
 import com.denivor.mafia.entity.User;
+import com.denivor.mafia.models.GamePattern;
+import com.denivor.mafia.models.GamePatternList;
 import com.denivor.mafia.repository.RoleRepository;
 import com.denivor.mafia.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service("userDetailsService")
 public class UserService implements UserDetailsService {
@@ -58,6 +59,8 @@ public class UserService implements UserDetailsService {
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
+        user.setGamerList(new ArrayList<>());
+        user.setGamePatterns(new GamePatternList());
         userRepository.save(user);
         return true;
     }
@@ -68,6 +71,16 @@ public class UserService implements UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public boolean updateUser(User user){
+        if (userRepository.findById(user.getId()).isPresent()) {
+            em.merge(user);
+            return true;
+        }
+        return false;
+
     }
 
 

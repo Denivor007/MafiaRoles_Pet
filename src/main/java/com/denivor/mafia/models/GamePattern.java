@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /*
 Этот класс будет список активных ролей и количества людей
@@ -46,6 +47,19 @@ public class GamePattern {
     public GamePattern(Map<String, Integer> activeRolesQuantity, Integer countOfPlayers) {
         this.activeRolesQuantity = activeRolesQuantity;
         this.countOfPlayers = countOfPlayers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GamePattern that = (GamePattern) o;
+        return Objects.equals(activeRolesQuantity, that.activeRolesQuantity) && Objects.equals(countOfPlayers, that.countOfPlayers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(activeRolesQuantity, countOfPlayers);
     }
 }
 

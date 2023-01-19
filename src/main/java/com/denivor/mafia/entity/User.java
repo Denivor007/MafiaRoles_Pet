@@ -1,7 +1,9 @@
 package com.denivor.mafia.entity;
 
+import com.denivor.mafia.converters.JSONGamePatternListConverter;
 import com.denivor.mafia.converters.JSONHashMapConverter;
 import com.denivor.mafia.converters.JSONListConverter;
+import com.denivor.mafia.models.GamePatternList;
 import com.denivor.mafia.validators.StrongPassword;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,8 +37,11 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    @Convert(converter = JSONHashMapConverter.class)
-    private HashMap<String, Object> gamePattern;
+    @Convert(converter = JSONGamePatternListConverter.class)
+    @Column(length = 5000)
+    private GamePatternList gamePatterns;
+
+    @Column(length = 950)
     @Convert(converter = JSONListConverter.class)
     private List<String> gamerList;
 

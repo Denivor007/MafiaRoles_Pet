@@ -1,27 +1,22 @@
 package com.denivor.mafia.converters;
 
-import com.denivor.mafia.models.GamePattern;
+import com.denivor.mafia.models.GamePatternList;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @Converter
-public class JSONHashMapConverter implements AttributeConverter<Map<String, Integer>, String> {
-
-    //@Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
-
+public class JSONGamePatternListConverter implements AttributeConverter<GamePatternList, String> {
+    @Autowired
+    public ObjectMapper objectMapper;
     @Override
-    public String convertToDatabaseColumn(Map<String, Integer> customerInfo) {
-
+    public String convertToDatabaseColumn(GamePatternList customerInfo) {
         String customerInfoJson = null;
         try {
             customerInfoJson = objectMapper.writeValueAsString(customerInfo);
@@ -33,11 +28,11 @@ public class JSONHashMapConverter implements AttributeConverter<Map<String, Inte
     }
 
     @Override
-    public Map<String, Integer> convertToEntityAttribute(String customerInfoJSON) {
-        Map<String, Integer> customerInfo = null;
+    public GamePatternList convertToEntityAttribute(String customerInfoJSON) {
+        GamePatternList customerInfo = null;
         try {
             customerInfo = objectMapper.readValue(customerInfoJSON,
-                    new TypeReference<HashMap<String, Integer>>() {
+                    new TypeReference<GamePatternList>() {
                     });
         }
         catch (JsonProcessingException e) {

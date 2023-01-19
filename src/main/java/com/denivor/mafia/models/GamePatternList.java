@@ -1,18 +1,17 @@
 package com.denivor.mafia.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.stereotype.Service;
 
-import java.security.KeyPair;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
-public class GamePatternsList {
-    private LinkedHashMap<String,GamePattern> gamePatterns;
+public class GamePatternList {
+    @JsonProperty("gamePatterns")
+    private HashMap<String,GamePattern> gamePatterns;
 
-    public void setGamePatterns(LinkedHashMap<String, GamePattern> gamePatterns) {
+    public void setGamePatterns(HashMap<String, GamePattern> gamePatterns) {
         this.gamePatterns = gamePatterns;
     }
 
@@ -28,6 +27,19 @@ public class GamePatternsList {
         setCurrentGamePattern(gamePatterns.get(currentGamePatternName));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GamePatternList that = (GamePatternList) o;
+        return Objects.equals(gamePatterns, that.gamePatterns) && Objects.equals(currentGamePatternName, that.currentGamePatternName) && Objects.equals(currentGamePattern, that.currentGamePattern);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gamePatterns, currentGamePatternName, currentGamePattern);
+    }
+
     public GamePattern getCurrentGamePattern() {
         return currentGamePattern;
     }
@@ -37,8 +49,8 @@ public class GamePatternsList {
     }
 
 
-    public GamePatternsList(){
-        gamePatterns = new LinkedHashMap<>();
+    public GamePatternList(){
+        gamePatterns = new HashMap<>();
         HashMap<String, Integer> activeRolesQuantity1 = new HashMap<>();
         activeRolesQuantity1.put("Regular maifa", 2);
         activeRolesQuantity1.put("Mafia don", 1);
@@ -74,7 +86,8 @@ public class GamePatternsList {
         return gamePatterns.get(key);
     }
 
-    public Set<String> getKeySet() {
+    @JsonIgnore
+     public Set<String> getKeySet() {
         return gamePatterns.keySet();
     }
 }
