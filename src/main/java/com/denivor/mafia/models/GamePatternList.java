@@ -85,6 +85,9 @@ public class GamePatternList {
     public GamePattern getPatternByKey(String key){
         return gamePatterns.get(key);
     }
+    public void addGamePattern(String name, GamePattern gamePattern){
+        gamePatterns.put(name, gamePattern);
+    }
 
     @JsonIgnore
      public Set<String> getKeySet() {

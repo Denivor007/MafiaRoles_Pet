@@ -32,17 +32,16 @@
     <div class="select-dropdown">
         <form  th:method="POST" th:object="${gamePatterns}" th:action = "@{/selectPattern}" >
         <select class="auto-send-select"  th:field = "*{currentGamePatternName}">
-<!--            th:attr="data-action=${gamePatterns.action}"-->
             <option th:each="string : ${gamePatterns.getKeySet()}"
                     th:value="${string}" th:text = "${string}"
                     th:selected="${string==currentGamePatternName}">Option</option>
 
+<!--            <option value="__ADD_NEW_PATTERN__">add...</option>-->
         </select>
         </form>
-
+        <a href="/createNewPattern">new</a>
     </div>
     <form  th:method="POST" th:object="${form}" th:action = "@{/SetSettings}" >
-    <!--    th:value="${form.countOfPlayers}"-->
         <input type="range" min="3" max="30" step="1" oninput="rangevalue.value=value"
                class="slider"
                th:value="${form.countOfPlayers}" th:field="*{countOfPlayers}"/>
@@ -50,12 +49,18 @@
 
         <div th:each="property : ${form.activeRolesQuantity.entrySet()}">
             <div class="form-group">
+                <a th:href = "@{/pattern/delete/{value}(value=${property.key})}">[X]</a>
                 <label th:for="*{activeRolesQuantity['__${property.key}__']}" th:text="${property.key}">Property</label>
                 <input type="text" class="form-control" th:field="*{activeRolesQuantity['__${property.key}__']}" />
             </div>
         </div>
-        <input type = "submit" value="SET SETTINGS">
     </form>
+    <form class = "addRole"  id="addRole" th:method="POST" th:object="${roleFields}"  th:action = "@{/pattern/addRole}">
+        <input form="addRole"  type="text" th:field="*{key}">
+        <input form="addRole"  type="text" th:field="*{value}">
+        <input form="addRole" type="submit" value="ADD">
+    </form>
+    <input type = "submit" value="SET SETTINGS">
 </div>
 
 

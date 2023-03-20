@@ -1,10 +1,7 @@
 package com.denivor.mafia.controllers;
 
 import com.denivor.mafia.entity.User;
-import com.denivor.mafia.models.GamePattern;
-import com.denivor.mafia.models.GamePatternList;
-import com.denivor.mafia.models.NameField;
-import com.denivor.mafia.models.PlayersList;
+import com.denivor.mafia.models.*;
 import com.denivor.mafia.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -19,7 +16,6 @@ import com.denivor.mafia.services.RoleProcessor;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Controller
 public class FirstController
@@ -59,8 +55,9 @@ public class FirstController
         model.addAttribute("playersList", playersList);
         model.addAttribute("form", gamePatterns.getCurrentGamePattern());
         model.addAttribute("nameField", new NameField());
+        model.addAttribute("roleFields", new GameRoleFields());
         model.addAttribute("gamePatterns", gamePatterns);
-        model.addAttribute("currentUser", getCurrentUser() );
+        model.addAttribute("currentUser", getCurrentUser());
     }
 
     @GetMapping()
@@ -94,7 +91,43 @@ public class FirstController
 
     @PostMapping("/selectPattern")
     public String selectPattern(@ModelAttribute("gamePatterns") GamePatternList gamePatterns1){
+
         gamePatterns = gamePatterns1;
+        return "redirect:/start";
+    }
+
+    @GetMapping("/createNewPattern")
+    public String createNewPattern(Model model){
+        model.addAttribute("newGamePattern", new NewGamePatternField());
+
+        return "create_pattern";
+    }
+
+    @PostMapping("/createNewPattern")
+    public String createNewPattern(@ModelAttribute("newGamePattern") NewGamePatternField value){
+        gamePatterns.addGamePattern(value.getValue(), new GamePattern());
+        saveGamePattern();
+        return "redirect:/start";
+
+    }
+
+
+    @GetMapping("/pattern/delete/{value}")
+    public String deleteRole(@PathVariable String value){
+        gamePatterns.getCurrentGamePattern().getActiveRolesQuantity().remove(value);
+        this.saveGamePattern();
+        return "redirect:/start";
+    }
+
+    @PostMapping("/pattern/addRole")
+    public String addRole(@Valid @ModelAttribute("roleFields") GameRoleFields value, BindingResult result, Model model){
+        if (result.hasErrors()) {
+            addAllAttributes(model);
+            return "start_page";
+        }
+
+        gamePatterns.getCurrentGamePattern().getActiveRolesQuantity().put(value.getKey(), value.getValue());
+        this.saveGamePattern();
         return "redirect:/start";
     }
 
